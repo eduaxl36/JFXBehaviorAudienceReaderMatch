@@ -15,19 +15,17 @@ import java.util.OptionalDouble;
  * @author eduardo
  */
 public class PesoDotServico {
-    
-    
-         public OptionalDouble obterPesoDomiciliarServicoDot(long p_id, List<DOTDomiciliar> p_lista_audiencia) {
-         
-     return new PesoDotRepository().obterPesoDomiciliarServicoDot(p_id, p_lista_audiencia);
-         
-     }
-    
-         
-             public OptionalDouble obterPesoIndividualServicoDot(long p_id, List<? extends DOTServico> p_lista_interna) {
-                 
-           return new PesoDotRepository().obterPesoIndividualServicoDot(p_id, p_lista_interna);
-             
-             }
-    
+
+    public OptionalDouble obterPesoDomiciliarServicoDot(long DomicilioId, List<DOTDomiciliar> AudienciasDomiciliares) {
+
+        return new PesoDotRepository().obterPesoDomiciliarServicoDot(DomicilioId, AudienciasDomiciliares);
+
+    }
+
+    public OptionalDouble obterPesoIndividualServicoDot(long IndividuoId, List<? extends DOTServico> AudienciasIndividuais) {
+
+        return new PesoDotRepository().obterPesoIndividualServicoDot(IndividuoId, AudienciasIndividuais);
+
+    }
+
 }

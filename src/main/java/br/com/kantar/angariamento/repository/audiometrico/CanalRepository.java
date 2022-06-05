@@ -14,27 +14,22 @@ import java.util.regex.Pattern;
  * @author eduardo
  */
 public class CanalRepository {
-    
-    
-    
-     public Set obterCanais(String p_entrypoint){
-    
-      Set var_controle_set=null;
 
-      Matcher var_controle_regex = Pattern.compile("\\d{11}X").matcher(p_entrypoint);
-    
-      var_controle_set= new LinkedHashSet();
-    
+    public final String EXPRESSAO_DOMICILIAR = "\\d{11}X";
 
-      while(var_controle_regex.find())
-      {
-    
-        var_controle_set.add(var_controle_regex.group().substring(var_controle_regex.group().length()-5,var_controle_regex.group().length()-1));
-   
-      }          
-            
-   
-     return var_controle_set;
-    
+    public Set obterCanais(String AudienciaCrua) {
+
+        Set Canais = new LinkedHashSet();
+
+        Matcher var_controle_regex = Pattern.compile(EXPRESSAO_DOMICILIAR).matcher(AudienciaCrua);
+
+        while (var_controle_regex.find()) {
+
+            Canais.add(var_controle_regex.group().substring(var_controle_regex.group().length() - 5, var_controle_regex.group().length() - 1));
+
+        }
+
+        return Canais;
+
     }
 }

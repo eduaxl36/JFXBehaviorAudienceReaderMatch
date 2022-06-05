@@ -5,7 +5,6 @@
  */
 package br.com.kantar.angariamento.cov;
 
-
 import br.com.kantar.angariamento.model.audiencia.AudienciaUtil;
 import static br.com.kantar.angariamento.cov.TratamentoAudienciaCovUtil.audienciaParaListaIndividual;
 import static br.com.kantar.angariamento.cov.TratamentoAudienciaCovUtil.converteMapaDeAudienciaCruaEmConcreta;
@@ -18,44 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  *
  * @author eduardo
  */
-public class TriagemDeAudiencia {
+public class TratamentoAudiencia {
 
     /**
-     * Principal objetivo deste metodo é conveter uma String de audiencia crua
-     * em um mapa que contem como chave tv e canal que se repetem mais de uma
-     * vez.
-     *
-     * @param EntradaAudienciaCrua --> string de audiecias
-     * 01000000184XA96B11A93B74A1166F,01000000184XA96B31A93B74A1166F
-     * @return retorma mapa com chave (tv,canal) e valor (repeticoes) ex:
-     * 01000000184=2
-     */
-    public Map mapeiaRepeticoesDeAudienciaMaiorQueUm(String EntradaAudienciaCrua) {
-
-        Map Audiencias = new HashMap<>();
-
-        Map AudienciasDTO = new AudienciaUtil() .retornaAgrupamentoDaListaRecebida(EntradaAudienciaCrua);
-
-        for (Object Audiencia : AudienciasDTO.keySet()) {
-
-            if (retornaModalidade(EntradaAudienciaCrua) > 1) {
-
-                Audiencias.put(Audiencia, Integer.parseInt(AudienciasDTO.get(Audiencia).toString()));
-
-            }
-
-        }
-
-        return Audiencias;
-
-    }
-
-  /**
      * Atraves da chave que contem a duplicação (MapaRepeticoes), o metodo le a
      * String (EntradaAudienciaCrua) e devolve uma lista com a audiencia
      * duplicada baseada na chave duplicada
@@ -75,7 +43,6 @@ public class TriagemDeAudiencia {
      * @param MapaRepeticoes
      * @return List
      */
-    
     public List insereAudienciaMapeadaEmLista(String EntradaAudienciaCrua, Map MapaRepeticoes) {
 
         List Audiencias = new ArrayList();
@@ -99,7 +66,7 @@ public class TriagemDeAudiencia {
         return Audiencias;
     }
 
-     /**
+    /**
      * Metodo desmembra em chave (canal+tv)e valor (audiencia crua e agrupada)
      *
      * @param Audiencias
@@ -131,7 +98,7 @@ public class TriagemDeAudiencia {
         return AudienciasMapeadas;
     }
 
-   /**
+    /**
      * Metodo recebe valor --> 010000000109X [A200b400....] e converte para -->
      * 010000000109X [0,0,0,0,0,0,1,......]
      *
@@ -155,26 +122,26 @@ public class TriagemDeAudiencia {
         return AudienciasDesagrupadas;
     }
 
-    
- 
-     public  Map obterAudienciaTratada(String p_entry_point){
-      
-      Map Duplicacoes =null;
-      Map Singulares =null;
-              
-            Duplicacoes  =new TriagemDeAudiencia().retornaAudienciasDesagrupadasParaValoresDoMapa(new TriagemDeAudiencia().agrupaAudienciaPorTvCanal(new TriagemDeAudiencia().insereAudienciaMapeadaEmLista(
-            p_entry_point, new TratativaAudienciaDuplicada().mapeiaRepeticoesDuplicadas(p_entry_point))));  
+    /**
+     * Metodo responsavel por agrupar os resultados, e ficar pronto para ser invocado pelo repository audiencia 
+     * @param AudienciaCrua
+     * @return Map
+     */
+    public Map obterAudienciaTratada(String AudienciaCrua) {
 
-            Singulares  =new TriagemDeAudiencia().retornaAudienciasDesagrupadasParaValoresDoMapa(new TriagemDeAudiencia().agrupaAudienciaPorTvCanal(new TriagemDeAudiencia().insereAudienciaMapeadaEmLista(
-            p_entry_point, new TratativaAudienciaSingular().mapeiaRepeticoesSingulares(p_entry_point))));   
+        Map Duplicacoes;
+        Map Singulares;
 
-            Duplicacoes.putAll(Singulares);
-            
-            return Duplicacoes;
-            
+        Duplicacoes = new TratamentoAudiencia().retornaAudienciasDesagrupadasParaValoresDoMapa(new TratamentoAudiencia().agrupaAudienciaPorTvCanal(new TratamentoAudiencia().insereAudienciaMapeadaEmLista(
+                AudienciaCrua, new TratativaAudienciaDuplicada().mapeiaRepeticoesDuplicadas(AudienciaCrua))));
 
-}
-    
-    
+        Singulares = new TratamentoAudiencia().retornaAudienciasDesagrupadasParaValoresDoMapa(new TratamentoAudiencia().agrupaAudienciaPorTvCanal(new TratamentoAudiencia().insereAudienciaMapeadaEmLista(
+                AudienciaCrua, new TratativaAudienciaSingular().mapeiaRepeticoesSingulares(AudienciaCrua))));
+
+        Duplicacoes.putAll(Singulares);
+
+        return Duplicacoes;
+
+    }
 
 }

@@ -8,43 +8,36 @@ import br.com.kantar.angariamento.model.abstrato.DOTServico;
 import br.com.kantar.angariamento.model.audiencia.Audiencia;
 import br.com.kantar.dot.repository.estatistico.DemograficaDotRepository;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
  * @author eduardo
  */
 public class DemograficaDotServico {
-    
-    
-     public int obterTamanhoDemograficaDomiciliarServicoDOT(List<Audiencia>p_lista_interna) {
-     
-     return new DemograficaDotRepository().obterTamanhoDemograficaDomiciliarServicoDOT(p_lista_interna);
-     
-     }
-    
-    
-      public int obterTamanhoDemograficaIndividualServicoDOT(List<Audiencia>p_lista_interna) {
-      
-      return new DemograficaDotRepository().obterTamanhoDemograficaIndividualServicoDOT(p_lista_interna);
-      
-      }
-     
-    
-      
-        public List<Integer> obterDemograficaDomiciliarServicoDOT(long p_id, List<? extends DOTServico> p_lista) {
-        
-       return new DemograficaDotRepository().obterDemograficaDomiciliarServicoDOT(p_id, p_lista);
-        
-      }
-      
-        
-     public List<Integer> obterDemograficaIndividualServicoDOT(long p_id_ind, List<? extends DOTServico> p_lista) {
-     
-         return new DemograficaDotRepository().obterDemograficaIndividualServicoDOT(p_id_ind, p_lista);
-     
-     }       
-        
-        
-        
-      
+
+    public int obterTamanhoDemograficaDomiciliarServicoDOT(List<Audiencia> Audiencias) {
+
+        return new DemograficaDotRepository().obterTamanhoDemograficaDomiciliarServicoDOT(Audiencias);
+
+    }
+
+    public int obterTamanhoDemograficaIndividualServicoDOT(List<Audiencia> Audiencias) {
+
+        return new DemograficaDotRepository().obterTamanhoDemograficaIndividualServicoDOT(Audiencias);
+
+    }
+
+    public List<Integer> obterDemograficaDomiciliarServicoDOT(long DomicilioId, List<? extends DOTServico> AudienciasDomiciliares) {
+
+        return new DemograficaDotRepository().obterDemograficasDomiciliarServicoDOT(DomicilioId, AudienciasDomiciliares);
+
+    }
+
+    public List<Integer> obterDemograficaIndividualServicoDOT(long IndividuoId, List<? extends DOTServico> AudienciasIndividuais) {
+
+        return new DemograficaDotRepository().obterDemograficasIndividualServicoDOT(IndividuoId, AudienciasIndividuais);
+
+    }
+
 }

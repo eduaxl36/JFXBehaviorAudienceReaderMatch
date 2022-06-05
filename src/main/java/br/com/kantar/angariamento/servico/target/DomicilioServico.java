@@ -13,9 +13,9 @@ import br.com.kantar.angariamento.repository.target.DomicilioRepository;
 public class DomicilioServico {
     
     
-    public String obterId(String p_entrypoint){
+    public String obterDomicilioId(String AudienciaCrua){
     
-    return new DomicilioRepository().obterId(p_entrypoint);
+    return new DomicilioRepository().obterDomicilioId(AudienciaCrua);
     
     }
     

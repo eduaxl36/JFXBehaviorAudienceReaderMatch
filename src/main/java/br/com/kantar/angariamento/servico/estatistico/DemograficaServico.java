@@ -16,16 +16,16 @@ import java.util.Map;
 public class DemograficaServico {
     
     
-    public Domicilio obterDemograficaDomiciliarAngariamento(String p_entrypoint) {
+    public Domicilio obterDemograficaDomiciliar(String AudienciaCrua) {
     
-        return  new DemograficaRepository().obterDemograficaDomiciliarAngariamento(p_entrypoint);
+        return  new DemograficaRepository().obterInstanciaDemograficaDomiciliar(AudienciaCrua);
     
     }
     
    
-   public Map<String, Demografica> obterDemograficaIndividualAngariamento(String p_entrypoiny) {
+   public Map<String, Demografica> obterDemograficaIndividual(String AudienciaCrua) {
   
-       return  new DemograficaRepository().obterDemograficaIndividualEntryPoint(p_entrypoiny);
+       return  new DemograficaRepository().ObterChaveamentoIndividuoDemografica(AudienciaCrua);
    
    }
 

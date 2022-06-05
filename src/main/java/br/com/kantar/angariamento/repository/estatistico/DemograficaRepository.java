@@ -4,21 +4,13 @@
  */
 package br.com.kantar.angariamento.repository.estatistico;
 
-
-
 import br.com.kantar.angariamento.model.target.Domicilio;
 import br.com.kantar.angariamento.controller.estatistico.PesoController;
 import br.com.kantar.angariamento.controller.target.DomicilioController;
 import br.com.kantar.angariamento.model.estatistico.Demografica;
-
 import br.com.kantar.angariamento.model.estatistico.Peso;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 
 /**
@@ -26,171 +18,135 @@ import java.util.regex.Pattern;
  * @author eduardo
  */
 public class DemograficaRepository {
-    
-    
-  
-    
-    
-   public  Map obterDemograficaIndividualEntryPoint(String p_entrypoint){
-    
-         
-    Map var_controle_mapa_retorno = new LinkedHashMap();
-         
-    String var_controle_st_dom = "";
 
-        try {
-            
-    Matcher var_controle_main_regex = Pattern.compile("Z\\d{1,}\n.*\n.*\n[\\d{11}X[A|B\\d{1,}]{1,}F\n]{1,}").matcher(p_entrypoint);
-    
-    while(var_controle_main_regex.find())
-    {
-        
-    String var_controle_store_regex_result = var_controle_main_regex.group();
-    
-    Matcher dom = Pattern.compile("Z\\d{1,}").matcher(var_controle_store_regex_result);
-    
-    var_controle_st_dom=dom.find()?dom.group():"";
-    
- 
-    Matcher var_controle_regex_aud = Pattern.compile("D.*").matcher(var_controle_store_regex_result);
-    
-    StringBuilder var_controle_sb = new StringBuilder();
-    
-   
-    while(var_controle_regex_aud.find())
-    {
-    
-    var_controle_sb.append(var_controle_regex_aud.group()+"\n");
-    
-    }
-    
- 
-    var_controle_mapa_retorno.put(var_controle_st_dom, var_controle_sb.toString());
-    
-   
-    }          
-            
-            
-        } catch (Exception e) {
-        
-        e.printStackTrace();
-        
-        }
-    
-    
+    public final String REGEX_OBTENCAO_AUDIENCIA_INDIVIDUAL = "Z\\d{1,}\n.*\n.*\n[\\d{11}X[A|B\\d{1,}]{1,}F\n]{1,}";
+    public final String REGEX_OBTENCAO_ID_INDIVIDUAL = "Z\\d{1,}";
+    public final String REGEX_OBTENCAO_DEMOGRAFICAS = "D.*";
+    public final String REGEX_OBTENCAO_DOM_DEMOGRAFICA = "I\\d{1,}\nD.*";
+    public final String REGEX_OBTENCAO_DEMOGRAFICA_DOMICILIAR = "D.*";
 
-        
-        return var_controle_mapa_retorno;
-    } 
-    
-    
-    
+    /**
+     * Recebe isto:
+     *
+     * I11010675202111280600202111290600 D,3,2,1,2,3,4,1,5,1,2 W5197.32
+     * Z11010675001 D,3,2,1,2,3,4,1,5,1,2,2,6,1,2,2,82,2,6,1,7 W5652.32
+     * 01000000590XA107B3A1B1A8B2A1318F 01000000004XA29B67A1344F
+     * 01000000007XA283B17A168B296A676F 01000000184XA96B11A93B74A1166F
+     * 01000000100XA112B4A46B38A1240F 01000000358XA116B4A154B9A1157F
+     * 01000000722XA123B4A1313F 01000000003XA127B35A1278F
+     * 01000000006XA764B65A611F 01000000005XA829B21A590F
+     *
+     * devolve isto:
+     *
+     * {Z11010675001=D,3,2,1,2,3,4,1,5,1,2,2,6,1,2,2,82,2,6,1,7 }
+     *
+     * @param AudienciaCrua
+     * @return Map
+     */
+    public Map ObterChaveamentoIndividuoDemografica(String AudienciaCrua) {
 
-   public String obterDemograficaDomiciliarEntryPoint(String p_entrypoint){
-    
-    String var_controle_st="";
-    
-        try {
-            
-                Matcher var_controle_regex_sp = Pattern.compile("I\\d{1,}\nD.*").matcher(p_entrypoint);
+        Map DemograficasIndividuais = new LinkedHashMap();
 
-                while(var_controle_regex_sp.find())
-                {
-  
-                    Matcher var_controle_regex_int = Pattern.compile("D.*").matcher(var_controle_regex_sp.group());
+        String IndividuoId;
 
-                    while(var_controle_regex_int.find()){
+        Matcher ColetorAudienciaIndividual = Pattern.compile(REGEX_OBTENCAO_AUDIENCIA_INDIVIDUAL).matcher(AudienciaCrua);
 
-                    var_controle_st = new String(var_controle_regex_int.group());
+        while (ColetorAudienciaIndividual.find()) {
 
-                }
+            Matcher ColetorIndividual = Pattern.compile(REGEX_OBTENCAO_ID_INDIVIDUAL).matcher(ColetorAudienciaIndividual.group());
 
+            IndividuoId = ColetorIndividual.find() ? ColetorIndividual.group() : null;
 
+            Matcher ColetorDemograficas = Pattern.compile(REGEX_OBTENCAO_DEMOGRAFICAS).matcher(ColetorAudienciaIndividual.group());
 
-                }          
-            
-            return var_controle_st;
-        } catch (Exception e) {
-        
-        e.printStackTrace();
-        
-        }
-    return var_controle_st;
-    
-    }
-    
-    
-  public Domicilio obterDemograficaDomiciliarAngariamento(String p_entrypoint) {
-      
-        Domicilio var_controle_obj_dom=null;
-        
-        try {
+            StringBuilder ConcatenadorAudiencia = new StringBuilder();
 
-            String[] var_controle_array_st = obterDemograficaDomiciliarEntryPoint(p_entrypoint).split(",");
-            List<Integer> var_controle_lista = new ArrayList<>();
-            for (String l_st : var_controle_array_st) {
+            while (ColetorDemograficas.find()) {
 
-                if (l_st.equals("D")) {
-
-                } else {
-
-                    var_controle_lista.add(Integer.parseInt(l_st));
-
-                }
+                ConcatenadorAudiencia.append(ColetorDemograficas.group()).append("\n");
 
             }
-             var_controle_obj_dom = new Domicilio(Integer.parseInt(new DomicilioController().obterId(p_entrypoint)), new Demografica(var_controle_lista), new Peso(Double.parseDouble(new PesoController().obterPesoDomiciliar(p_entrypoint).replaceAll("W", "").trim())));
 
-            return var_controle_obj_dom;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
+            DemograficasIndividuais.put(IndividuoId, ConcatenadorAudiencia.toString());
 
         }
 
-        return var_controle_obj_dom;
+        return DemograficasIndividuais;
     }
-    
-  
- 
-  public Map<String, Demografica> obterDemograficaIndividualAngariamento(String p_entrypoiny) {
 
-        Map<String, Demografica> var_controle_mapa_retorno = new LinkedHashMap();
+    public String ObterDemograficaDomiciliar(String AudienciaCrua) {
 
-        Map var_controle_temp_map = obterDemograficaIndividualEntryPoint(p_entrypoiny);
-        
+        String DemograficaDomiciliar = null;
 
+        Matcher ColetorDomDemografica = Pattern.compile(REGEX_OBTENCAO_DOM_DEMOGRAFICA).matcher(AudienciaCrua);
 
-        for (Object l_map : var_controle_temp_map.keySet()) {
+        while (ColetorDomDemografica.find()) {
 
-            String[] var_controle_array_st = var_controle_temp_map.get(l_map).toString().split(",");
+            Matcher ColetorDemograficadDomiciliar = Pattern.compile(REGEX_OBTENCAO_DEMOGRAFICA_DOMICILIAR).matcher(ColetorDomDemografica.group());
+
+            while (ColetorDemograficadDomiciliar.find()) {
+
+                DemograficaDomiciliar = ColetorDemograficadDomiciliar.group();
+
+            }
+
+        }
+
+        return DemograficaDomiciliar;
+
+    }
+
+    public Domicilio obterInstanciaDemograficaDomiciliar(String AudienciaCrua) {
+
+        Domicilio Domicilio = null;
+
+        String[] Demograficas = ObterDemograficaDomiciliar(AudienciaCrua).split(",");
+        List<Integer> var_controle_lista = new ArrayList<>();
+        for (String Demografica : Demograficas) {
+
+            if (!(Demografica.equals("D"))) {
+                var_controle_lista.add(Integer.parseInt(Demografica));
+            }
+
+        }
+        Domicilio = new Domicilio(Integer.parseInt(
+                new DomicilioController().obterDomicilioId(AudienciaCrua)),
+                new Demografica(var_controle_lista),
+                new Peso(Double.parseDouble(new PesoController().obterPesoDomiciliar(AudienciaCrua).replaceAll("W", "").trim())));
+
+        return Domicilio;
+
+    }
+
+    public Map<String, Demografica> obterInstanciaDemograficaIndividual(String AudienciaCrua) {
+
+        Map<String, Demografica> MapeamentoDemograficasIndividuais = new LinkedHashMap();
+
+        Map DemograficasIndividuais = ObterChaveamentoIndividuoDemografica(AudienciaCrua);
+
+        for (Object DemograficaIndividual : DemograficasIndividuais.keySet()) {
+
+            String[] DemograficaFatiada = DemograficasIndividuais.get(DemograficaIndividual).toString().split(",");
 
             List<Integer> var_controle_list = new ArrayList();
 
-            for (String l_st : var_controle_array_st) {
+            for (String l_st : DemograficaFatiada) {
 
                 if (l_st.equals("D")) {
                 } else {
 
-            
                     var_controle_list.add(Integer.parseInt(l_st.trim()));
 
                 }
 
             }
 
-            var_controle_mapa_retorno.put(l_map.toString(), new Demografica(var_controle_list));
+            MapeamentoDemograficasIndividuais.put(DemograficaIndividual.toString(), new Demografica(var_controle_list));
 
         }
 
-        return var_controle_mapa_retorno;
+        return MapeamentoDemograficasIndividuais;
 
     }
-  
-  
-  
-  
 
-    
 }

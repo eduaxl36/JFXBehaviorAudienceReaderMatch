@@ -12,20 +12,17 @@ import java.util.Set;
  * @author eduardo
  */
 public class IndividuoServico {
-    
-    
-    public Set obterIndividuosAngariamentoEntryPoint(String p_entrypoint){
-    
-        return new IndividuoRepository().obterIndividuosAngariamentoEntryPoint(p_entrypoint);
-    
+
+    public Set ObterIdIndividuo(String AudienciaCrua) {
+
+        return new IndividuoRepository().ObterIdIndividuo(AudienciaCrua);
+
     }
-    
-    public int obterQtdIndividuos(String p_entrypoint) {
-    
-        return new IndividuoRepository().obterQtdIndividuos(p_entrypoint);
-    
-        
+
+    public int obterQtdIndividuos(String AudienciaCrua) {
+
+        return new IndividuoRepository().obterQtdIndividuos(AudienciaCrua);
+
     }
-    
-    
+
 }

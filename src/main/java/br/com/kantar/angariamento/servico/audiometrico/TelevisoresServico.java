@@ -14,15 +14,15 @@ import java.util.Set;
 public class TelevisoresServico {
     
     
-     public Set obterTelevisores(String p_entrypoint){
+     public Set obterTelevisores(String AudienciaCrua){
      
-     return new TelevisoresRepository().obterTelevisores(p_entrypoint);
+     return new TelevisoresRepository().obterTelevisores(AudienciaCrua);
      
      }
     
-     public int obterQtdTelevisores(String p_entrypoint) {
+     public int obterQtdTelevisores(String AudienciaCrua) {
      
-     return new TelevisoresRepository().obterQtdTelevisores(p_entrypoint);
+     return new TelevisoresRepository().obterQtdTelevisores(AudienciaCrua);
          
      }
      

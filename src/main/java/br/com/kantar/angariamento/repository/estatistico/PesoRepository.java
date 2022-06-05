@@ -4,111 +4,76 @@
  */
 package br.com.kantar.angariamento.repository.estatistico;
 
-import br.com.analise.dot.met.DOTDomiciliar;
-import br.com.analise.dot.met.DOTIndividual;
-import br.com.kantar.angariamento.model.abstrato.DOTServico;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.DoubleStream;
 
 /**
  *
  * @author eduardo
  */
 public class PesoRepository {
-    
-     public String obterPesoDomiciliarEntryPoint(String p_entrypoint){
-    
-    String var_controle_st_retorno="";
-    
-    
-        try {
 
-            
-                    Matcher var_controle_regex = Pattern.compile("I\\d{1,}\n\\w{1,}.*\nW\\d{1,}\\.\\d{1,}").matcher(p_entrypoint);
+    public final String EXP_COLETA_INT_ATE_PESO = "I\\d{1,}\n\\w{1,}.*\nW\\d{1,}\\.\\d{1,}";
+    public final String EXP_COLETA_PESO = "W\\d{1,}\\.\\d{1,}";
+    public final String EXP_COLETA_PESO_ATE_AUD = "Z\\d{1,}\n.*\n.*\n[\\d{11}X[A|B\\d{1,}]{1,}F\n]{1,}";
+    public final String EXP_COLETA_ID_IND = "Z\\d{1,}";
 
-                    while(var_controle_regex.find())
-                    {
+    public String obterPesoDomiciliar(String AudienciaCrua) {
 
-                    Matcher var_controle_regex_interno = Pattern.compile("W\\d{1,}\\.\\d{1,}").matcher(var_controle_regex.group());
+        String Peso = "";
 
-                    if(var_controle_regex_interno.find()){
+        Matcher ColetaIndPeso
+                = Pattern.compile(EXP_COLETA_INT_ATE_PESO).matcher(AudienciaCrua);
 
-                    var_controle_st_retorno = new String(var_controle_regex_interno.group());
+        while (ColetaIndPeso.find()) {
 
-                    }
+            Matcher ColetaPeso
+                    = Pattern.compile(EXP_COLETA_PESO).matcher(ColetaIndPeso.group());
 
-                    }          
+            if (ColetaPeso.find()) {
 
-
-                    } catch (Exception e) {
-
-                    e.printStackTrace();
-
-                    }
-    
-    return var_controle_st_retorno;
-    }
-   
-     
-     
-     
-    public  Map obterPesoIndividualEntryPoint(String p_entrypoint){
-    
-         
-    Map var_controle_mapa_retorno = new LinkedHashMap();
-         
-    String var_controle_st_dom = "";
-
-    try {
-            
-            Matcher var_controle_exp_main = Pattern.compile("Z\\d{1,}\n.*\n.*\n[\\d{11}X[A|B\\d{1,}]{1,}F\n]{1,}").matcher(p_entrypoint);
-
-            while(var_controle_exp_main.find())
-            {
-
-            String var_controle_get_main_expression_result = var_controle_exp_main.group();
-
-            Matcher var_controle_regex_dom = Pattern.compile("Z\\d{1,}").matcher(var_controle_get_main_expression_result);
-
-            var_controle_st_dom=var_controle_regex_dom.find()?var_controle_regex_dom.group():"";
-
-            Matcher var_controle_regex_aud = Pattern.compile("W\\d{1,}\\.\\d{1,}").matcher(var_controle_get_main_expression_result);
-
-            StringBuilder var_controle_sb = new StringBuilder();
-
-
-            while(var_controle_regex_aud.find())
-            {
-
-            var_controle_sb.append(var_controle_regex_aud.group()+"\n");
+                Peso = ColetaPeso.group();
 
             }
 
+        }
 
-            var_controle_mapa_retorno.put(var_controle_st_dom, var_controle_sb.toString());
-
-            }          
-
-
-    } 
-    
-    catch (Exception e) 
-    {
-
-    e.printStackTrace();
-
+        return Peso;
     }
-    
-    
-        
 
-        return var_controle_mapa_retorno;
+    public Map obterPesoIndividual(String AudienciaCrua) {
+
+        Map Pesos = new LinkedHashMap();
+
+        String IndividuoId = "";
+
+        Matcher ColetaPesoAud = Pattern.compile(EXP_COLETA_PESO_ATE_AUD)
+                .matcher(AudienciaCrua);
+
+        while (ColetaPesoAud.find()) {
+
+            Matcher var_controle_regex_dom = Pattern.compile(EXP_COLETA_ID_IND)
+                    .matcher(ColetaPesoAud.group());
+
+            IndividuoId = var_controle_regex_dom.find() ? var_controle_regex_dom.group() : "";
+
+            Matcher ColetaPeso = Pattern.compile(EXP_COLETA_PESO).matcher(ColetaPesoAud.group());
+
+            StringBuilder Peso = new StringBuilder();
+
+            while (ColetaPeso.find()) {
+
+                Peso.append(ColetaPeso.group()).append("\n");
+
+            }
+
+            Pesos.put(IndividuoId, Peso.toString());
+
+        }
+
+        return Pesos;
     }
-    
-     
+
 }

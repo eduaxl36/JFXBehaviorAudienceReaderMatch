@@ -19,7 +19,7 @@ import br.com.kantar.angariamento.model.estatistico.Peso;
 import br.com.kantar.angariamento.model.target.Individuo;
 import br.com.kantar.angariamento.servico.arquivo.ArquivoMetServico;
 import br.com.kantar.angariamento.servico.audiometrico.TelevisoresServico;
-import br.com.kantar.angariamento.cov.TriagemDeAudiencia;
+import br.com.kantar.angariamento.cov.TratamentoAudiencia;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.io.File;
@@ -43,39 +43,38 @@ import org.apache.commons.io.IOUtils;
  * @author eduardo
  */
 public class AudienciaRepository {
- 
+
+    public final String REGEX_IND_AUD="Z\\d{1,}\n.*\n.*\n[\\d{11}X[A|B\\d{1,}]{1,}F\n]{1,}";
     
-    public Map entrypointAudienciaIndividual(String p_entrypoint) {
+    public Map entrypointAudienciaIndividual(String AudienciaCrua) {
 
         Map var_controle_mapa_retorno = new LinkedHashMap();
 
         String var_controle_st_dom = "";
 
-            Matcher var_controle_regex_basis = Pattern.compile("Z\\d{1,}\n.*\n.*\n[\\d{11}X[A|B\\d{1,}]{1,}F\n]{1,}").matcher(p_entrypoint);
+        Matcher var_controle_regex_basis = Pattern.compile(REGEX_IND_AUD).matcher(AudienciaCrua);
 
-            while (var_controle_regex_basis.find()) {
+        while (var_controle_regex_basis.find()) {
 
-                String var_controle_base_r_exp = var_controle_regex_basis.group();
+            String var_controle_base_r_exp = var_controle_regex_basis.group();
 
-                Matcher var_controle_regex_get_dom = Pattern.compile("Z\\d{1,}").matcher(var_controle_base_r_exp);
+            Matcher var_controle_regex_get_dom = Pattern.compile("Z\\d{1,}").matcher(var_controle_base_r_exp);
 
-                var_controle_st_dom = var_controle_regex_get_dom.find() ? var_controle_regex_get_dom.group() : "";
+            var_controle_st_dom = var_controle_regex_get_dom.find() ? var_controle_regex_get_dom.group() : "";
 
-                Matcher var_controle_regex_get_aud = Pattern.compile("(\\d{1,}X[A|B\\d{1,}]{1,}F){1,}").matcher(var_controle_base_r_exp);
+            Matcher var_controle_regex_get_aud = Pattern.compile("(\\d{1,}X[A|B\\d{1,}]{1,}F){1,}").matcher(var_controle_base_r_exp);
 
-                StringBuilder var_controle_sb = new StringBuilder();
+            StringBuilder var_controle_sb = new StringBuilder();
 
-                while (var_controle_regex_get_aud.find()) {
+            while (var_controle_regex_get_aud.find()) {
 
-                    var_controle_sb.append(var_controle_regex_get_aud.group() + "\n");
-
-                }
-
-                var_controle_mapa_retorno.put(var_controle_st_dom, var_controle_sb.toString());
+                var_controle_sb.append(var_controle_regex_get_aud.group() + "\n");
 
             }
 
-   
+            var_controle_mapa_retorno.put(var_controle_st_dom, var_controle_sb.toString());
+
+        }
 
         return var_controle_mapa_retorno;
     }
@@ -84,32 +83,30 @@ public class AudienciaRepository {
 
         Multimap var_controle_multimap_retorno = ArrayListMultimap.create();
 
-            Map var_coleta_mapa_entry_point_map = entrypointAudienciaIndividual(p_entrypoint);
+        Map var_coleta_mapa_entry_point_map = entrypointAudienciaIndividual(p_entrypoint);
 
-            for (Object l_map : var_coleta_mapa_entry_point_map.keySet()) {
+        for (Object l_map : var_coleta_mapa_entry_point_map.keySet()) {
 
-                String[] var_controle_array_st_linhas = var_coleta_mapa_entry_point_map.get(l_map).toString().split("\n");
+            String[] var_controle_array_st_linhas = var_coleta_mapa_entry_point_map.get(l_map).toString().split("\n");
 
-                for (String l_linhas : var_controle_array_st_linhas) {
+            for (String l_linhas : var_controle_array_st_linhas) {
 
-                    if (l_linhas.matches(".*\\d{1,}.*")) {
+                if (l_linhas.matches(".*\\d{1,}.*")) {
 
-                        int var_controle_tv = Integer.parseInt(l_linhas.substring(0, 2));
-                        int var_controle_canal = Integer.parseInt(l_linhas.substring(l_linhas.indexOf("X") - 5, l_linhas.indexOf("X")));
+                    int var_controle_tv = Integer.parseInt(l_linhas.substring(0, 2));
+                    int var_controle_canal = Integer.parseInt(l_linhas.substring(l_linhas.indexOf("X") - 5, l_linhas.indexOf("X")));
 
-                        String var_controle_complete_key = l_map + ";" + var_controle_tv + ";" + var_controle_canal;
+                    String var_controle_complete_key = l_map + ";" + var_controle_tv + ";" + var_controle_canal;
 
-                        List var_controle_lista = (List) new AudienciaUtil().transformaLinhaEmAudiencia(l_linhas);
+                    List var_controle_lista = (List) new AudienciaUtil().transformaLinhaEmAudiencia(l_linhas);
 
-                        var_controle_multimap_retorno.put(var_controle_complete_key, var_controle_lista);
-
-                    }
+                    var_controle_multimap_retorno.put(var_controle_complete_key, var_controle_lista);
 
                 }
 
             }
 
-    
+        }
 
         return var_controle_multimap_retorno;
 
@@ -125,7 +122,7 @@ public class AudienciaRepository {
 
         Map<Integer, Integer> var_controle_mapa_audiencia_concreta = null;
 
-        Map var_controle_mapa_demografico = new DemograficaController().obterDemograficaIndividualAngariamento(p_entrypoint);
+        Map var_controle_mapa_demografico = new DemograficaController().obterDemograficaIndividual(p_entrypoint);
 
         Map var_controle_mapa_peso = new PesoController().obterPesoIndividual(p_entrypoint);
 
@@ -180,20 +177,18 @@ public class AudienciaRepository {
 
     public StringBuilder entrypointAudienciaDomiciliar(String pedacoArray) {
 
-     
-            StringBuilder ac = new StringBuilder();
+        StringBuilder ac = new StringBuilder();
 
-            String exp1 = "\\d{11}X[A|B\\d{1,}]{1,}F";
-            Matcher m = Pattern.compile(exp1).matcher(pedacoArray);
+        String exp1 = "\\d{11}X[A|B\\d{1,}]{1,}F";
+        Matcher m = Pattern.compile(exp1).matcher(pedacoArray);
 
-            while (m.find()) {
+        while (m.find()) {
 
-                ac.append(m.group() + "\n");
+            ac.append(m.group() + "\n");
 
-            }
+        }
 
-            return ac;
-
+        return ac;
 
     }
 
@@ -201,50 +196,47 @@ public class AudienciaRepository {
 
         List<Afericao> var_controle_lista_afericoes_retorno = new ArrayList<>();
 
-            Map var_controle_mapa_detalhamento = new TriagemDeAudiencia().obterAudienciaTratada(entrypointAudienciaDomiciliar(p_entrypoint_raw_string).toString());
+        Map var_controle_mapa_detalhamento = new TratamentoAudiencia().obterAudienciaTratada(entrypointAudienciaDomiciliar(p_entrypoint_raw_string).toString());
 
-            for (Object l_detalhe : var_controle_mapa_detalhamento.keySet()) {
+        for (Object l_detalhe : var_controle_mapa_detalhamento.keySet()) {
 
-                Map<Integer, Integer> var_controle_mapa_audiencia_concreta = new LinkedHashMap();
+            Map<Integer, Integer> var_controle_mapa_audiencia_concreta = new LinkedHashMap();
 
-                List var_controle_list_temp = (List) var_controle_mapa_detalhamento.get(l_detalhe);
+            List var_controle_list_temp = (List) var_controle_mapa_detalhamento.get(l_detalhe);
 
-                for (int i = 0; i < var_controle_list_temp.size(); i++) {
+            for (int i = 0; i < var_controle_list_temp.size(); i++) {
 
-                    var_controle_mapa_audiencia_concreta.put(i, Integer.parseInt(var_controle_list_temp.get(i).toString()));
-
-                }
-
-                int var_controle_canal = Integer.parseInt(l_detalhe.toString().substring(l_detalhe.toString().length() - 5, l_detalhe.toString().length()));
-
-                if (new AudienciaUtil().validaCanalEmArray(p_array_canais, var_controle_canal)) {
-
-                    var_controle_lista_afericoes_retorno.add(new Afericao(new Televisor(Integer.parseInt(l_detalhe.toString().substring(0, 2))), new Canal(var_controle_canal), new Audiometria(var_controle_mapa_audiencia_concreta)));
-
-                }
+                var_controle_mapa_audiencia_concreta.put(i, Integer.parseInt(var_controle_list_temp.get(i).toString()));
 
             }
 
-            return var_controle_lista_afericoes_retorno;
+            int var_controle_canal = Integer.parseInt(l_detalhe.toString().substring(l_detalhe.toString().length() - 5, l_detalhe.toString().length()));
 
-    
+            if (new AudienciaUtil().validaCanalEmArray(p_array_canais, var_controle_canal)) {
+
+                var_controle_lista_afericoes_retorno.add(new Afericao(new Televisor(Integer.parseInt(l_detalhe.toString().substring(0, 2))), new Canal(var_controle_canal), new Audiometria(var_controle_mapa_audiencia_concreta)));
+
+            }
+
+        }
+
+        return var_controle_lista_afericoes_retorno;
 
     }
 
     public boolean filtrarCanaisEmAudiencia(int[] p_array_canais, String p_entrypoint) {
 
+        for (int x : p_array_canais) {
 
-            for (int x : p_array_canais) {
+            String tempVar = x + "X";
 
-                String tempVar = x + "X";
+            if (p_entrypoint.contains(tempVar)) {
 
-                if (p_entrypoint.contains(tempVar)) {
-
-                    return true;
-
-                }
+                return true;
 
             }
+
+        }
 
         return false;
 
@@ -254,38 +246,35 @@ public class AudienciaRepository {
 
         List<Audiencia> var_controle_lista_retorno = new ArrayList();
 
-      
+        for (File l_arq : p_contentmap.values()) {
 
-            for (File l_arq : p_contentmap.values()) {
+            FileInputStream var_controle_fis = new FileInputStream(l_arq);
 
-                FileInputStream var_controle_fis = new FileInputStream(l_arq);
+            String var_controle_fis_as_string = IOUtils.toString(var_controle_fis, "UTF-8").replaceAll("I", "QI").replaceAll("\r\n", "\n");
 
-                String var_controle_fis_as_string = IOUtils.toString(var_controle_fis, "UTF-8").replaceAll("I", "QI").replaceAll("\r\n", "\n");
+            String[] var_controle_array_desmembramento = var_controle_fis_as_string.split("Q");
 
-                String[] var_controle_array_desmembramento = var_controle_fis_as_string.split("Q");
+            for (int i = 1; i < var_controle_array_desmembramento.length; i++) {
 
-                for (int i = 1; i < var_controle_array_desmembramento.length; i++) {
+                if (filtrarCanaisEmAudiencia(p_array_canais, var_controle_array_desmembramento[i])) {
 
-                    if (filtrarCanaisEmAudiencia(p_array_canais, var_controle_array_desmembramento[i])) {
-
-                        var_controle_lista_retorno.add(
-                                new Audiencia(
-                                        (ArquivoMet) new ArquivoMetServico().retornarObjeto(var_controle_array_desmembramento[i]),
-                                        new DemograficaController().obterDemograficaDomiciliarAngariamento(var_controle_array_desmembramento[i]),
-                                        new TelevisoresServico().obterQtdTelevisores(var_controle_array_desmembramento[i]),
-                                        new IndividuoController().obterQtdIndividuos(var_controle_array_desmembramento[i]),
-                                        obterAudienciaDomiciliar(var_controle_array_desmembramento[i], p_array_canais),
-                                        obterAudienciaIndividual(var_controle_array_desmembramento[i], p_array_canais)
-                                )
-                        );
-
-                    }
+                    var_controle_lista_retorno.add(
+                            new Audiencia(
+                                    (ArquivoMet) new ArquivoMetServico().retornarObjeto(var_controle_array_desmembramento[i]),
+                                    new DemograficaController().obterDemograficaDomiciliar(var_controle_array_desmembramento[i]),
+                                    new TelevisoresServico().obterQtdTelevisores(var_controle_array_desmembramento[i]),
+                                    new IndividuoController().obterQtdIndividuos(var_controle_array_desmembramento[i]),
+                                    obterAudienciaDomiciliar(var_controle_array_desmembramento[i], p_array_canais),
+                                    obterAudienciaIndividual(var_controle_array_desmembramento[i], p_array_canais)
+                            )
+                    );
 
                 }
 
             }
 
- 
+        }
+
         return var_controle_lista_retorno;
     }
 

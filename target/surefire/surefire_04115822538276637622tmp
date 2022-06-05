@@ -1,0 +1,8 @@
+#surefire_0
+#Wed Apr 13 19:28:11 BRT 2022
+maven.ext.class.path=C\:\\Program Files\\NetBeans-13\\netbeans\\java\\maven-nblib\\netbeans-eventspy.jar
+file.encoding=UTF-8
+test=br.com.analise.dot.met.DOTDomiciliarTest
+basedir=C\:\\Users\\eduax\\Desktop\\Projetos\\JDOT
+user.dir=C\:\\Users\\eduax\\Desktop\\Projetos\\JDOT
+localRepository=C\:\\Users\\eduax\\.m2\\repository

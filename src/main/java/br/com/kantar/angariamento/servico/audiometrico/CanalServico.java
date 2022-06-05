@@ -15,9 +15,9 @@ public class CanalServico {
     
     
     
-     public Set obterCanais(String p_entrypoint){
+     public Set obterCanais(String AudienciaCrua){
      
-         return new CanalRepository().obterCanais(p_entrypoint);
+         return new CanalRepository().obterCanais(AudienciaCrua);
      
      }
      

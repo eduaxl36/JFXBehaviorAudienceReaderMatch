@@ -14,9 +14,9 @@ import java.util.Set;
 public class IndividuoController {
     
     
-    public Set obterIndividuosAngariamentoEntryPoint(String p_entrypoint){
+    public Set ObterNumeralIndividuos(String p_entrypoint){
     
-    return new IndividuoServico().obterIndividuosAngariamentoEntryPoint(p_entrypoint);
+    return new IndividuoServico().ObterIdIndividuo(p_entrypoint);
         
     }
     

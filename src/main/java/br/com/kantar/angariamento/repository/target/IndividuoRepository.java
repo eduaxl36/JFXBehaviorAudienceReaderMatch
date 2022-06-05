@@ -14,38 +14,30 @@ import java.util.regex.Pattern;
  * @author eduardo
  */
 public class IndividuoRepository {
-    
-   
-   public Set obterIndividuosAngariamentoEntryPoint(String p_entrypoint){
-    
-         
-         Set var_controle_temp = new LinkedHashSet();
-    
-                Matcher var_controle_regex = Pattern.compile("Z\\d{1,}").matcher(p_entrypoint);
 
-                while(var_controle_regex.find())
-                {
+    public final String EXP_COLETOR_NUM_INDIVIDUO = "Z\\d{1,}";
 
-                var_controle_temp.add(var_controle_regex.group().toString().subSequence(var_controle_regex.group().length()-3, var_controle_regex.group().length()));
+    public Set ObterIdIndividuo(String AudienciaCrua) {
 
-                }          
-                
-        return var_controle_temp;
-    
-    } 
-    
-  
-   public int obterQtdIndividuos(String p_entrypoint) {
+        Set ConjuntoIndividuos = new LinkedHashSet();
 
-            return obterIndividuosAngariamentoEntryPoint(p_entrypoint).size();
+        Matcher ColetorIndividuos = Pattern.compile(EXP_COLETOR_NUM_INDIVIDUO)
+                .matcher(AudienciaCrua);
+
+        while (ColetorIndividuos.find()) {
+
+            ConjuntoIndividuos.add(ColetorIndividuos.group().substring(ColetorIndividuos.group().length() - 3, ColetorIndividuos.group().length()));
+
+        }
+
+        return ConjuntoIndividuos;
 
     }
-       
-    
-    
-    
-    
-    
-    
-    
+
+    public int obterQtdIndividuos(String AudienciaCrua) {
+
+        return ObterIdIndividuo(AudienciaCrua).size();
+
+    }
+
 }

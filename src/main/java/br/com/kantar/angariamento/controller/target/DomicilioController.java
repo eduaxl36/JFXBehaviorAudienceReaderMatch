@@ -13,9 +13,9 @@ import br.com.kantar.angariamento.servico.target.DomicilioServico;
 public class DomicilioController {
     
     
-   public String obterId(String p_entrypoint){
+   public String obterDomicilioId(String p_entrypoint){
    
-   return new DomicilioServico().obterId(p_entrypoint);
+   return new DomicilioServico().obterDomicilioId(p_entrypoint);
    
    }
     

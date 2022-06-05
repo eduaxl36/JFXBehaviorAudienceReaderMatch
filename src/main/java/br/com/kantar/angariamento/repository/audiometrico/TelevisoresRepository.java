@@ -14,38 +14,29 @@ import java.util.regex.Pattern;
  * @author eduardo
  */
 public class TelevisoresRepository {
-    
-   
- public Set obterTelevisores(String p_entrypoint){
-    
-     
-                Set var_controle_set_retorno=null;
-    
-                var_controle_set_retorno = new LinkedHashSet();
 
-                Matcher var_controle_regex = Pattern.compile("\\d{11}X").matcher(p_entrypoint);
+    private final String EXPRESSAO_DOM = "\\d{11}X";
 
-                while(var_controle_regex.find())
-                {
+    public Set obterTelevisores(String AudienciaCrua) {
 
-                var_controle_set_retorno.add(var_controle_regex.group().substring(0,2));
+        Set Televisores = new LinkedHashSet();
 
+        Matcher RegexDomicilio = Pattern.compile(EXPRESSAO_DOM).matcher(AudienciaCrua);
 
-                }          
+        while (RegexDomicilio.find()) {
 
-                return var_controle_set_retorno;
-     
-    }
- 
- 
-    
-     public int obterQtdTelevisores(String p_entrypoint) {
+            Televisores.add(RegexDomicilio.group().substring(0, 2));
 
-            return obterTelevisores(p_entrypoint).size();
+        }
+
+        return Televisores;
 
     }
-     
-        
-    
-    
+
+    public int obterQtdTelevisores(String AudienciaCrua) {
+
+        return obterTelevisores(AudienciaCrua).size();
+
+    }
+
 }

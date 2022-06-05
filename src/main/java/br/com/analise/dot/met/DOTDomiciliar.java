@@ -303,7 +303,7 @@ public class DOTDomiciliar extends DOTServico {
 
             System.out.println(x + ";" + mapa.get(x).toString().replaceAll("\\[|\\]", "").replaceAll(",", ";").replaceAll("\\s", ""));
 
-        }
+}
 
 
 

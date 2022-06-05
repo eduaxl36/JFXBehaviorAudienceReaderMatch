@@ -12,29 +12,15 @@ import java.util.regex.Pattern;
  * @author eduardo
  */
 public class DomicilioRepository {
+
+    public final String EXP_COLETA_ID_INDIVIDUO="I\\d{1,}";
     
+    public String obterDomicilioId(String AundienciaCrua) {
 
-    public String obterId(String p_entrypoint){
-    
-    String var_controle_id_retorno="";
-    
+        Matcher ColetorDomiciliar = Pattern.compile(EXP_COLETA_ID_INDIVIDUO).matcher(AundienciaCrua);
 
-                Matcher var_controle_regex = Pattern.compile("I\\d{1,}").matcher(p_entrypoint);
+        return ColetorDomiciliar.find() ? ColetorDomiciliar.group().substring(1, 9) : "-";
 
-                while(var_controle_regex.find())
-                {
-
-  
-                 var_controle_id_retorno=var_controle_regex.group().substring(1,9);
-
-
-                }          
-            
- 
-    return var_controle_id_retorno;
-    
     }
-        
-    
-    
+
 }

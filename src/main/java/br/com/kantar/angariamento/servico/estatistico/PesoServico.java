@@ -15,16 +15,16 @@ public class PesoServico {
     
     
     
-       public String obterPesoDomiciliar(String p_entrypoint){
+       public String obterPesoDomiciliar(String AudienciaCrua){
        
-       return new PesoRepository().obterPesoDomiciliarEntryPoint(p_entrypoint);
+       return new PesoRepository().obterPesoDomiciliar(AudienciaCrua);
        
        }
     
     
-        public  Map obterPesoIndividual(String p_entrypoint){
+        public  Map obterPesoIndividual(String AudienciaCrua){
         
-        return new PesoRepository().obterPesoIndividualEntryPoint(p_entrypoint);
+        return new PesoRepository().obterPesoIndividual(AudienciaCrua);
         
         }
        

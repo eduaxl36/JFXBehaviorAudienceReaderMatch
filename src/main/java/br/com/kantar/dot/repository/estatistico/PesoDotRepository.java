@@ -18,55 +18,36 @@ import java.util.stream.DoubleStream;
 public class PesoDotRepository {
     
     
-    
    
-    
-     public OptionalDouble obterPesoDomiciliarServicoDot(long p_id, List<DOTDomiciliar> p_lista_audiencia) {
+     public OptionalDouble obterPesoDomiciliarServicoDot(long DomicilioId, List<DOTDomiciliar> AudienciasDomiciliares) {
    
          
-        DoubleStream var_controle_ocorrencia=null;
-        try {
-
-            var_controle_ocorrencia = p_lista_audiencia.
-                    stream().filter(x -> x.getId_domicilio() == p_id)
+            DoubleStream PesoDomiciliar;
+ 
+                    PesoDomiciliar = AudienciasDomiciliares.
+                    stream().filter(x -> x.getId_domicilio() == DomicilioId)
                     .mapToDouble(x -> x.getPeso());
 
-            return var_controle_ocorrencia.min();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        return var_controle_ocorrencia.min();
+            return PesoDomiciliar.min();
 
     } 
     
      
      
      
-    public OptionalDouble obterPesoIndividualServicoDot(long p_id, List<? extends DOTServico> p_lista_interna) {
+    public OptionalDouble obterPesoIndividualServicoDot(long IndividuoId, List<? extends DOTServico> AudienciasGenericas) {
         
-        List<DOTIndividual> var_controle_lista_retorno = (List<DOTIndividual>) p_lista_interna;
+            List<DOTIndividual> AudienciasIndividuais = (List<DOTIndividual>) AudienciasGenericas;
         
-        DoubleStream var_controle_ocorrencia=null;
-        try {
+            DoubleStream PesoIndividual;
 
-            var_controle_ocorrencia = var_controle_lista_retorno.
+            PesoIndividual = AudienciasIndividuais.
                     stream()
-                    .filter(x -> x.getId_individuo() == p_id)
+                    .filter(x -> x.getId_individuo() == IndividuoId)
                     .mapToDouble(x -> x.getPeso());
 
-            return var_controle_ocorrencia.min();
+            return PesoIndividual.min();
 
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        return var_controle_ocorrencia.min();
 
     }   
 }
